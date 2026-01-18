@@ -1,0 +1,37 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('saldouser_2210003', function (Blueprint $table) {
+            $table->bigIncrements('id'); // bigint auto increment primary key
+
+            $table->unsignedBigInteger('iduser_2210003');
+            $table->double('jumlahsaldo_2210003')->default(0);
+
+            $table->timestamps();
+
+            // Foreign key
+            $table->foreign('iduser_2210003')
+                ->references('id')
+                ->on('users')
+                ->onUpdate('cascade');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        //
+    }
+};
