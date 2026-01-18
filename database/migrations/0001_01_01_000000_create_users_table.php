@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('photo2210003')->nullable();
             $table->string('photo_thumb2210003')->nullable();
-            $table->string('fcmtoken');
+            $table->string('fcmtoken')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
