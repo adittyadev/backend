@@ -7,6 +7,7 @@ use App\Models\MintaUang;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Models\SaldoUser;
+use Illuminate\Support\Facades\Log;
 
 class MintaUangController extends Controller
 {
@@ -41,25 +42,34 @@ class MintaUangController extends Controller
         ]);
     }
 
-    public function getDataDetail(Request $request, $noReferensi)
+    public function getDataDetail(Request $request, $noref)
     {
-        // PERBAIKAN: Gunakan nama kolom yang benar dengan suffix _2210003
+        // Log untuk debugging
+        Log::info('=== GET DATA DETAIL ===');
+        Log::info('No Referensi diterima: ' . $noref);
+        Log::info('User ID: ' . $request->user()->id);
+
+        // PERBAIKAN: Gunakan nama tabel yang benar: mintauang_2210003
         $cekData = MintaUang::join(
             'users',
             'users.id',
             '=',
-            'minta_uangs.dari_iduser_2210003' // Perbaiki join column
+            'mintauang_2210003.dari_iduser_2210003'
         )
             ->select([
-                'minta_uangs.noref_2210003 as noref',
-                'minta_uangs.tglminta_2210003 as tglminta',
-                'minta_uangs.dari_iduser_2210003 as dari_iduser',
+                'mintauang_2210003.noref_2210003 as noref',
+                'mintauang_2210003.dari_iduser_2210003 as dari_iduser',
                 'users.name AS dari_namauser',
-                'minta_uangs.jumlahuang_2210003 as jumlahuang',
-                'minta_uangs.stt_2210003 as stt'
+                'mintauang_2210003.jumlahuang_2210003 as jumlahuang',
+                'mintauang_2210003.stt_2210003 as stt'
             ])
-            ->where('minta_uangs.noref_2210003', $noReferensi)
+            ->where('mintauang_2210003.noref_2210003', $noref)
             ->first();
+
+        Log::info('Data ditemukan: ' . ($cekData ? 'Ya' : 'Tidak'));
+        if ($cekData) {
+            Log::info('Data: ' . json_encode($cekData));
+        }
 
         if ($cekData) {
             // Cek apakah status sudah diproses
@@ -90,13 +100,18 @@ class MintaUangController extends Controller
         }
     }
 
-    public function prosesPermintaan(Request $request, $noReferensi)
+    public function prosesPermintaan(Request $request, $noref)
     {
+        Log::info('=== PROSES PERMINTAAN ===');
+        Log::info('No Referensi: ' . $noref);
+        Log::info('User ID Pemberi: ' . $request->user()->id);
+
         $request->validate([
             'jmluang' => 'required|numeric|min:1',
         ]);
 
         $jumlahdiMinta = $request->jmluang;
+        Log::info('Jumlah diminta: ' . $jumlahdiMinta);
 
         // Cek saldo user yang memberikan (pemberi)
         $saldoUser = SaldoUser::where('iduser_2210003', $request->user()->id)->first();
@@ -121,7 +136,7 @@ class MintaUangController extends Controller
         DB::beginTransaction();
         try {
             // Ambil data permintaan
-            $mintaUang = MintaUang::where('noref_2210003', $noReferensi)->first();
+            $mintaUang = MintaUang::where('noref_2210003', $noref)->first();
 
             if (!$mintaUang) {
                 throw new \Exception('Data permintaan tidak ditemukan');
