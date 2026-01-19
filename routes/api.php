@@ -50,3 +50,5 @@ Route::middleware('auth:sanctum')->post(
 );
 
 Route::middleware('auth:sanctum')->post('/minta-uang/save', [MintaUangController::class, 'insertDataMintaUang']);
+Route::get('/minta-uang/detail/{noref}', [MintaUangController::class, 'getDataDetail'])->middleware('auth:sanctum');
+Route::put('/minta-uang/proses-permintaan/{noref}', [MintaUangController::class, 'prosesPermintaan'])->middleware('auth:sanctum');
