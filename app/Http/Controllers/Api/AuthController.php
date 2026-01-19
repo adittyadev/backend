@@ -42,15 +42,23 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+            'token_fcm' => 'required'
+        ]);
+
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'Email atau password yang Anda masukkan salah.'], 401);
+            return response()->json(['message' => 'Email atau password salah'], 401);
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        // Simpan token FCM terbaru
         $user->fcmtoken = $request->token_fcm;
         $user->save();
+
+        $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'message' => 'Login successful',
@@ -58,6 +66,7 @@ class AuthController extends Controller
             'user' => $user
         ]);
     }
+
 
     public function dataPengguna(Request $request)
     {
