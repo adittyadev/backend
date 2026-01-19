@@ -49,7 +49,7 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
-        $user->fcmtoken = $request->fcm_token;
+        $user->fcmtoken = $request->token_fcm;
         $user->save();
 
         return response()->json([
