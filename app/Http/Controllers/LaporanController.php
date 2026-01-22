@@ -44,15 +44,22 @@ class LaporanController extends Controller
         $userId = $request->user()->id;
 
         $data = DB::table('kirimuang_2210003')
-            ->where('dari_iduser_2210003', $userId)
+            ->join('users', 'users.id', '=', 'kirimuang_2210003.dari_iduser_2210003')
+            ->where('kirimuang_2210003.dari_iduser_2210003', $userId)
             ->when($request->from && $request->to, function ($q) use ($request) {
-                $q->whereBetween('tglkirim_2210003', [$request->from, $request->to]);
+                $q->whereBetween('kirimuang_2210003.tglkirim_2210003', [$request->from, $request->to]);
             })
-            ->orderBy('tglkirim_2210003', 'desc')
+            ->select(
+                'kirimuang_2210003.*',
+                'users.name as nama_pengirim',
+                'users.email as email_pengirim'
+            )
+            ->orderBy('kirimuang_2210003.tglkirim_2210003', 'desc')
             ->get();
 
         return response()->json($data);
     }
+
 
     public function mintaUang(Request $request)
     {
