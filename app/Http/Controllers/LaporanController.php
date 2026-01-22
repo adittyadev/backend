@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\DB;
 
 class LaporanController extends Controller
 {
-    // UANG MASUK
     public function uangMasuk(Request $request)
     {
         $userId = $request->user()->id;
@@ -15,13 +14,15 @@ class LaporanController extends Controller
         $data = DB::table('kas_2210003')
             ->where('jenis_2210003', 'masuk')
             ->where('iduser_2210003', $userId)
+            ->when($request->from && $request->to, function ($q) use ($request) {
+                $q->whereBetween('tanggal_2210003', [$request->from, $request->to]);
+            })
             ->orderBy('tanggal_2210003', 'desc')
             ->get();
 
         return response()->json($data);
     }
 
-    // UANG KELUAR
     public function uangKeluar(Request $request)
     {
         $userId = $request->user()->id;
@@ -29,32 +30,40 @@ class LaporanController extends Controller
         $data = DB::table('kas_2210003')
             ->where('jenis_2210003', 'keluar')
             ->where('iduser_2210003', $userId)
+            ->when($request->from && $request->to, function ($q) use ($request) {
+                $q->whereBetween('tanggal_2210003', [$request->from, $request->to]);
+            })
             ->orderBy('tanggal_2210003', 'desc')
             ->get();
 
         return response()->json($data);
     }
 
-    // KIRIM UANG
     public function kirimUang(Request $request)
     {
         $userId = $request->user()->id;
 
         $data = DB::table('kirimuang_2210003')
             ->where('dari_iduser_2210003', $userId)
+            ->when($request->from && $request->to, function ($q) use ($request) {
+                $q->whereBetween('tglkirim_2210003', [$request->from, $request->to]);
+            })
             ->orderBy('tglkirim_2210003', 'desc')
             ->get();
 
         return response()->json($data);
     }
 
-    // MINTA UANG
     public function mintaUang(Request $request)
     {
         $userId = $request->user()->id;
 
         $data = DB::table('mintauang_2210003')
             ->where('dari_iduser_2210003', $userId)
+            ->when($request->from && $request->to, function ($q) use ($request) {
+                $q->whereBetween('noref_2210003', [$request->from, $request->to]);
+                // ⚠️ Jika tidak ada kolom tanggal di mintauang, sebaiknya tambahkan kolom tanggal
+            })
             ->orderBy('noref_2210003', 'desc')
             ->get();
 
