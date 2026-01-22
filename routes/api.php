@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ScanController;
 use App\Http\Controllers\KasController;
 use App\Http\Controllers\KirimUangController;
 use App\Http\Controllers\MintaUangController;
+use App\Http\Controllers\LaporanController;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
@@ -52,3 +53,11 @@ Route::middleware('auth:sanctum')->post(
 Route::middleware('auth:sanctum')->post('/minta-uang/save', [MintaUangController::class, 'insertDataMintaUang']);
 Route::get('/minta-uang/detail/{noref}', [MintaUangController::class, 'getDataDetail'])->middleware('auth:sanctum');
 Route::put('/minta-uang/proses-permintaan/{noref}', [MintaUangController::class, 'prosesPermintaan'])->middleware('auth:sanctum');
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/laporan/uang-masuk', [LaporanController::class, 'uangMasuk']);
+    Route::get('/laporan/uang-keluar', [LaporanController::class, 'uangKeluar']);
+    Route::get('/laporan/kirim-uang', [LaporanController::class, 'kirimUang']);
+    Route::get('/laporan/minta-uang', [LaporanController::class, 'mintaUang']);
+});
