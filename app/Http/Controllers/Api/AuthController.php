@@ -45,7 +45,7 @@ class AuthController extends Controller
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
-            'token_fcm' => 'required'
+            'token_fcm' => 'nullable|string',
         ]);
 
         $user = User::where('email', $request->email)->first();
@@ -54,9 +54,11 @@ class AuthController extends Controller
             return response()->json(['message' => 'Email atau password salah'], 401);
         }
 
-        // Simpan token FCM terbaru
-        $user->fcmtoken = $request->token_fcm;
-        $user->save();
+        // Simpan token FCM kalau ada
+        if ($request->filled('token_fcm')) {
+            $user->fcmtoken = $request->token_fcm;
+            $user->save();
+        }
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -66,6 +68,7 @@ class AuthController extends Controller
             'user' => $user
         ]);
     }
+
 
 
     public function dataPengguna(Request $request)
