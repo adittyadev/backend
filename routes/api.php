@@ -58,6 +58,6 @@ Route::put('/minta-uang/proses-permintaan/{noref}', [MintaUangController::class,
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/laporan/uang-masuk', [LaporanController::class, 'uangMasuk']);
     Route::get('/laporan/uang-keluar', [LaporanController::class, 'uangKeluar']);
-    Route::get('/laporan/kirim-uang', [LaporanController::class, 'kirimUang']);
-    Route::get('/laporan/minta-uang', [LaporanController::class, 'mintaUang']);
+    Route::get('/laporan/kirim-uang', [KirimUangController::class, 'laporanKirimUang']);
+    Route::get('/laporan/minta-uang', [MintaUangController::class, 'laporanMintaUang']);
 });

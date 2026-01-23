@@ -186,4 +186,30 @@ class MintaUangController extends Controller
             ], 500);
         }
     }
+
+    public function laporanMintaUang(Request $request)
+    {
+        $userId = $request->user()->id;
+
+        $data = MintaUang::join(
+            'users as penerima',
+            'penerima.id',
+            '=',
+            'mintauang_2210003.ke_iduser_2210003'
+        )
+            ->select([
+                'mintauang_2210003.noref_2210003',
+                'mintauang_2210003.tglsukses_2210003',
+                'mintauang_2210003.jumlahuang_2210003',
+                'penerima.name as nama_penerima',
+                'mintauang_2210003.stt_2210003'
+            ])
+            ->where('mintauang_2210003.dari_iduser_2210003', $userId)
+            ->orderByDesc('mintauang_2210003.tglsukses_2210003')
+            ->get();
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
 }

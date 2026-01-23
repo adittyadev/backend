@@ -99,4 +99,30 @@ class KirimUangController extends Controller
             ]);
         }
     }
+
+    public function laporanKirimUang(Request $request)
+    {
+        $userId = $request->user()->id;
+
+        $data = KirimUang::join(
+            'users as pengirim',
+            'pengirim.id',
+            '=',
+            'kirimuang_2210003.dari_iduser_2210003'
+        )
+            ->select([
+                'kirimuang_2210003.noref_2210003',
+                'kirimuang_2210003.tglkirim_2210003',
+                'kirimuang_2210003.jumlahuang_2210003',
+                'pengirim.name as nama_pengirim'
+            ])
+            ->where('kirimuang_2210003.ke_iduser_2210003', $userId)
+            ->orWhere('kirimuang_2210003.dari_iduser_2210003', $userId)
+            ->orderByDesc('kirimuang_2210003.tglkirim_2210003')
+            ->get();
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
 }
