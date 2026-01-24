@@ -199,9 +199,9 @@ class MintaUangController extends Controller
         )
             ->select([
                 'mintauang_2210003.noref_2210003',
-                'mintauang_2210003.tglsukses_2210003',
+                'mintauang_2210003.tglsukses_2210003 as tanggal_2210003',
                 'mintauang_2210003.jumlahuang_2210003',
-                'penerima.name as nama_penerima',
+                'penerima.name as keterangan_2210003',
                 'mintauang_2210003.stt_2210003'
             ])
             ->where('mintauang_2210003.dari_iduser_2210003', $userId)
