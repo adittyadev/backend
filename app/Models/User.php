@@ -26,7 +26,7 @@ class User extends Authenticatable
         'user_agent',
         'photo',
         'photo_thumb',
-        'fcm_token',
+        'fcmtoken',
     ];
 
     /**
